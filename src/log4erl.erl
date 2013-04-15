@@ -39,7 +39,14 @@
 %%======================================
 start(_Type, []) ->
     ?LOG("Starting log4erl app~n"),
-    log4erl_sup:start_link(?DEFAULT_LOGGER).
+    {ok, Pid} = log4erl_sup:start_link(?DEFAULT_LOGGER),
+    case os:getenv("LOG4ERL_CONF_FILE") of
+	false ->
+	    ok;
+	Conf ->
+	    ok = log4erl:conf(Conf)
+    end,
+    {ok, Pid}.
 
 stop(_State) ->
     log_filter_codegen:reset(),
