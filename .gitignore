@@ -1,4 +1,6 @@
-deps
-ebin
+*~
+*.beam
+ebin/
+rel/log4erl/
 src/log4erl_lex.erl
 src/log4erl_parser.erl

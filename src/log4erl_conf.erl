@@ -24,7 +24,7 @@ parse(Tokens) ->
     end.
 
 conf(File) ->
-    application:start(log4erl),
+    %%application:start(log4erl),
     Tree = parse(leex(File)),
     traverse(Tree).
 
