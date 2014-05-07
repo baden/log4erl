@@ -8,7 +8,7 @@
 -import(log4erl_utils, [to_list/1, to_atom/1, to_int/1]).
 
 %% gen_event callbacks
--export([init/1, handle_event/2, handle_call/2, 
+-export([init/1, handle_event/2, handle_call/2,
 	 handle_info/2, terminate/2, code_change/3]).
 
 -define(DEFAULT_XMLSPEC, [{level, "%L", att},
@@ -39,7 +39,7 @@ init({conf, Conf}) when is_list(Conf) ->
 		     end,
 		     [],
 		     [dir, file, type, max, rotation, suffix, level, {xmlspec, ?DEFAULT_XMLSPEC}]),
-    
+
     init(list_to_tuple(lists:reverse(CL)));
 init({Dir, Fname, {Type, Max}, Rot, Suf, Level, Spec} = _Conf) ->
     ?LOG2("xml_appender:init() - 1 ~p~n",[_Conf]),
@@ -60,7 +60,7 @@ init({Dir, Fname, {Type, Max}, Rot, Suf, Level, Spec} = _Conf) ->
 				#xml_spec{name=N, format=Tokens, type=T}
 			end, Spec),
 
-    %% Start xml 
+    %% Start xml
     file:write(Fd, "<?xml>\n<log4erl>"),
 
     State = #xml_appender{dir = Dir, file_name = Fname, fd = Fd, counter=0,
@@ -92,7 +92,7 @@ handle_call({change_level, Level}, State) ->
 handle_call({change_filename, Fname}, #xml_appender{dir=Dir, suffix=Suf} = State) ->
     File = Dir ++ "/" ++ Fname ++ "." ++ Suf,
     {ok, Fd} = file:open(File, ?FILE_OPTIONS),
-    State2 = State#file_appender{file_name = Fname, fd = Fd},
+    State2 = State#xml_appender{file_name = Fname, fd = Fd},
     ?LOG2("Changed filename to ~p~n",[File]),
     {ok, ok, State2};
 handle_call(_Request, State) ->
@@ -153,7 +153,7 @@ rotate(#xml_appender{fd = Fd, dir=Dir,  file_name=Fn, counter=Cntr, rotation=Rot
     {ok, State2}.
 
 % Check if the file needs to be rotated
-% ignore in case of if log type is set to time instead of size	    
+% ignore in case of if log type is set to time instead of size
 check_rotation(State) ->
     #xml_appender{dir=Dir, file_name=Fname, log_type = #log_type{type=T, max=Max}, suffix=Suf} = State,
     case T of
